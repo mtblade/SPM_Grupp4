@@ -5,10 +5,10 @@ using UnityEngine;
 public class Gizmo : MonoBehaviour {
 
     public float Range;
-
+    public GroundState state;
     private void Start()
     {
-
+        Range = state.grapplingRange;
     }
 
     void OnDrawGizmos()
