@@ -2,21 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraBehaviour: MonoBehaviour {
+public class CameraBehaviour : MonoBehaviour
+{
 
-	public PlayerController Player;
-	public Vector3 Offset;
-	private Vector3 _targetPosition;
+    public PlayerController Player;
+    public Vector3 Offset;
+    private Vector3 _targetPosition;
 
-	[Header("Follow")]
-	public float SmoothingTime;
-	private Vector3 _currentVelocity;
+    [Header("Follow")]
+    public float SmoothingTime;
+    private Vector3 _currentVelocity;
 
-	[Header("Look Ahead")]
-	public float MaxLookAhead;
-	public float LookAheadAccelerationTime;
-	private float _lookAheadSpeed;
-	private float _lookAhead;
+    [Header("Look Ahead")]
+    public float MaxLookAhead;
+    public float LookAheadAccelerationTime;
+    private float _lookAheadSpeed;
+    private float _lookAhead;
 
     private float counter;
     private bool followingPlayer;
@@ -37,10 +38,11 @@ public class CameraBehaviour: MonoBehaviour {
         _isStatic = false;
     }
 
-    public void Update(){
-		UpdateLookAhead();
-		UpdateTargetPosition();
-	}
+    public void Update()
+    {
+        UpdateLookAhead();
+        UpdateTargetPosition();
+    }
 
     private void LateUpdate()
     {
@@ -54,7 +56,8 @@ public class CameraBehaviour: MonoBehaviour {
             UpdateMovementToStaticZone();
     }
 
-	private void UpdateTargetPosition(){
+    private void UpdateTargetPosition()
+    {
         _targetPosition = Player.transform.position;
         _targetPosition += Offset;
         _targetPosition += Vector3.right * _lookAhead;
@@ -66,37 +69,41 @@ public class CameraBehaviour: MonoBehaviour {
         _staticPosition = pos;
     }
 
-    private void UpdateMovement(){
-		transform.position = Vector3.SmoothDamp(transform.position, _targetPosition, 
-			ref _currentVelocity, 0);
-	}
+    private void UpdateMovement()
+    {
+        transform.position = Vector3.SmoothDamp(transform.position, _targetPosition,
+            ref _currentVelocity, 0);
+    }
 
     private void UpdateMovementToStaticZone()
     {
-        if(_isStatic)
         transform.position = Vector3.SmoothDamp(transform.position, _staticPosition,
             ref _currentVelocity, SmoothingTime);
-        else {
-            while (counter < SmoothingTime)
-                transform.position = Vector3.Lerp(_staticPosition, _targetPosition, counter);
-        }
     }
 
-	private void UpdateLookAhead(){
-		float targetLookAhead = MathHelper.Sign(Player.Velocity.x) * MaxLookAhead;
-		_lookAhead = Mathf.SmoothDamp(_lookAhead, targetLookAhead,
-			ref _lookAheadSpeed, LookAheadAccelerationTime);
-	}
+    private void UpdateMovementFromStaticZone()
+    {
+        transform.position = Vector3.SmoothDamp(_staticPosition,_targetPosition,
+              ref _currentVelocity, SmoothingTime);
+    }
 
-	//private void UpdateLookAround(){
-	//	if(Player.Velocity.magnitude > PlayerMaximumSpeedForLookAround){
-	//		_lookAroundAmount = 0.0f;
-	//		_playerStillTime = 0.0f;
-	//		return;
-	//	}
-	//	_playerStillTime += Time.deltaTime;
-	//	if(_playerStillTime < TimeBeforeLookAround)
-	//		return;
-	//	_lookAroundAmount = Input.GetAxisRaw("Vertical") * MaxLookAroundAmount;
-	//}
+
+    private void UpdateLookAhead()
+    {
+        float targetLookAhead = MathHelper.Sign(Player.Velocity.x) * MaxLookAhead;
+        _lookAhead = Mathf.SmoothDamp(_lookAhead, targetLookAhead,
+            ref _lookAheadSpeed, LookAheadAccelerationTime);
+    }
+
+    //private void UpdateLookAround(){
+    //	if(Player.Velocity.magnitude > PlayerMaximumSpeedForLookAround){
+    //		_lookAroundAmount = 0.0f;
+    //		_playerStillTime = 0.0f;
+    //		return;
+    //	}
+    //	_playerStillTime += Time.deltaTime;
+    //	if(_playerStillTime < TimeBeforeLookAround)
+    //		return;
+    //	_lookAroundAmount = Input.GetAxisRaw("Vertical") * MaxLookAroundAmount;
+    //}
 }
